@@ -6,6 +6,8 @@ import (
 	"github.com/rz1998/invest-trade-basic/types/tradeBasic"
 	"github.com/rz1998/invest-trade-file"
 	"github.com/rz1998/invest-trade-file/internal/config"
+	"github.com/rz1998/invest-trade-file/internal/logic/fileQmtDbf"
+	"github.com/rz1998/invest-trade-file/internal/logic/transGWT"
 	"sync/atomic"
 	"time"
 )
@@ -13,6 +15,8 @@ import (
 type (
 	ConfTransFunc = config.ConfTransFunc
 	Config        = config.Config
+	ApiFileQmtDbf = fileQmtDbf.ApiFileQmtDbf
+	ApiTransGWT   = transGWT.ApiTransGWT
 )
 
 // ApiTraderFile 对通用交易接口IApiTrader的实现
