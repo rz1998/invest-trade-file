@@ -15,6 +15,10 @@ import (
 type (
 	ConfTransFunc = config.ConfTransFunc
 	Config        = config.Config
+	IApiTrans     = logic.IApiTrans
+	IApiFile      = logic.IApiFile
+)
+type (
 	ApiFileQmtDbf = fileQmtDbf.ApiFileQmtDbf
 	ApiTransGWT   = transGWT.ApiTransGWT
 )
