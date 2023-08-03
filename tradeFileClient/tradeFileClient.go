@@ -10,6 +10,11 @@ import (
 	"time"
 )
 
+type (
+	ConfTransFunc = config.ConfTransFunc
+	Config        = config.Config
+)
+
 // ApiTraderFile 对通用交易接口IApiTrader的实现
 type ApiTraderFile struct {
 	// 配置信息
