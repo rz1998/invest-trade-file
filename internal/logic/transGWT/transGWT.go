@@ -279,8 +279,9 @@ func (api ApiTransGWT) TransReqOrderAction(reqOrderAction *tradeBasic.PReqOrderA
 	mapTransed["order_type"] = "cancel_order_number"
 	// 资金账号
 	mapTransed["price_type"] = ""
-	// 合同编号或者订单编号或taskid mode_price
-	mapTransed["mode_price"] = reqOrderAction.OrderSys.IdOrderLocal
+	mapTransed["mode_price"] = ""
+	mapTransed["stock_code"] = ""
+	mapTransed["account_id"] = reqOrderAction.OrderSys.IdOrderLocal
 	// 账号类别 act_type
 	mapTransed["act_type"] = ""
 	// 账号类型 brokertype
