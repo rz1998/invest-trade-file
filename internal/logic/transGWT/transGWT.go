@@ -7,7 +7,6 @@ import (
 	"github.com/rz1998/invest-trade-basic/types/tradeBasic"
 	"github.com/rz1998/invest-trade-file/internal/config"
 	"github.com/rz1998/invest-trade-file/internal/logic"
-	file "github.com/rz1998/invest-trade-file/tradeFileClient"
 	"github.com/zeromicro/go-zero/core/logx"
 	"strconv"
 	"strings"
@@ -29,8 +28,7 @@ func getUniqueCode(mapTransed map[string]string) string {
 }
 
 type ApiTransGWT struct {
-	ApiTrade *file.ApiTraderFile
-	conf     config.Config
+	conf config.Config
 }
 
 func (api ApiTransGWT) Init(conf config.Config) {
@@ -81,64 +79,27 @@ func (api ApiTransGWT) TransInfoOrder(mapTransed map[string]string) *tradeBasic.
 	} else {
 		logx.Errorf("TransInfoOrder unhandled type %s", strDir)
 	}
-	var ok bool
 	// reqOrder
 	var reqOrder *tradeBasic.PReqOrder
-	if orderRef == "" {
-		if reqOrder, ok = api.ApiTrade.MapReqOrderSys[idOrderSys]; !ok {
-			price, _ := strconv.ParseFloat(mapTransed["price"], 64)
-			price *= 10000
-			vol, _ := strconv.ParseInt(mapTransed["vol"], 10, 64)
-			reqOrder = &tradeBasic.PReqOrder{
-				Timestamp:  date.UnixMilli(),
-				OrderRef:   orderRef,
-				Dir:        dir,
-				FlagOffset: flagOffset,
-				UniqueCode: uniqueCode,
-				Price:      int64(price),
-				Vol:        vol,
-			}
-			api.ApiTrade.MapReqOrderSys[idOrderSys] = reqOrder
-		}
-	} else {
-		if reqOrder, ok = api.ApiTrade.MapReqOrderLocal[orderRef]; !ok {
-			price, _ := strconv.ParseFloat(mapTransed["price"], 64)
-			price *= 10000
-			vol, _ := strconv.ParseInt(mapTransed["vol"], 10, 64)
-			reqOrder = &tradeBasic.PReqOrder{
-				Timestamp:  date.UnixMilli(),
-				OrderRef:   orderRef,
-				Dir:        dir,
-				FlagOffset: flagOffset,
-				UniqueCode: uniqueCode,
-				Price:      int64(price),
-				Vol:        vol,
-			}
-			api.ApiTrade.MapReqOrderLocal[orderRef] = reqOrder
-		}
+	price, _ := strconv.ParseFloat(mapTransed["price"], 64)
+	price *= 10000
+	vol, _ := strconv.ParseInt(mapTransed["vol"], 10, 64)
+	reqOrder = &tradeBasic.PReqOrder{
+		Timestamp:  date.UnixMilli(),
+		OrderRef:   orderRef,
+		Dir:        dir,
+		FlagOffset: flagOffset,
+		UniqueCode: uniqueCode,
+		Price:      int64(price),
+		Vol:        vol,
 	}
 	// orderSys
 	var orderSys *tradeBasic.SOrderSys
-	if orderRef == "" {
-		if orderSys, ok = api.ApiTrade.MapOrderSysSys[idOrderSys]; !ok {
-			orderSys = &tradeBasic.SOrderSys{
-				Timestamp:    time.Now().UnixMilli(),
-				OrderRef:     orderRef,
-				IdOrderLocal: mapTransed["idOrderLocal"],
-				IdOrderSys:   idOrderSys,
-			}
-			api.ApiTrade.MapOrderSysSys[idOrderSys] = orderSys
-		}
-	} else {
-		if orderSys, ok = api.ApiTrade.MapOrderSysLocal[orderRef]; !ok {
-			orderSys = &tradeBasic.SOrderSys{
-				Timestamp:    time.Now().UnixMilli(),
-				OrderRef:     orderRef,
-				IdOrderLocal: mapTransed["idOrderLocal"],
-				IdOrderSys:   idOrderSys,
-			}
-			api.ApiTrade.MapOrderSysLocal[orderRef] = orderSys
-		}
+	orderSys = &tradeBasic.SOrderSys{
+		Timestamp:    time.Now().UnixMilli(),
+		OrderRef:     orderRef,
+		IdOrderLocal: mapTransed["idOrderLocal"],
+		IdOrderSys:   idOrderSys,
 	}
 	// tradeStatus
 	var statusOrderSubmit tradeBasic.EStatusOrderSubmit
@@ -235,50 +196,20 @@ func (api ApiTransGWT) TransInfoTrade(mapTransed map[string]string) *tradeBasic.
 	price *= 10000
 	mapTransed["price"] = fmt.Sprintf("%.0f", price)
 
-	var ok bool
 	// reqOrder
 	var reqOrder *tradeBasic.PReqOrder
-	if orderRef == "" {
-		if reqOrder, ok = api.ApiTrade.MapReqOrderSys[idOrderSys]; !ok {
-			reqOrder = &tradeBasic.PReqOrder{
-				OrderRef:   orderRef,
-				Dir:        dir,
-				FlagOffset: flagOffset,
-				UniqueCode: uniqueCode,
-			}
-			api.ApiTrade.MapReqOrderSys[idOrderSys] = reqOrder
-		}
-	} else {
-		if reqOrder, ok = api.ApiTrade.MapReqOrderLocal[orderRef]; !ok {
-			reqOrder = &tradeBasic.PReqOrder{
-				OrderRef:   orderRef,
-				Dir:        dir,
-				FlagOffset: flagOffset,
-				UniqueCode: uniqueCode,
-			}
-			api.ApiTrade.MapReqOrderLocal[orderRef] = reqOrder
-		}
+	reqOrder = &tradeBasic.PReqOrder{
+		OrderRef:   orderRef,
+		Dir:        dir,
+		FlagOffset: flagOffset,
+		UniqueCode: uniqueCode,
 	}
 	// orderSys
 	var orderSys *tradeBasic.SOrderSys
-	if orderRef == "" {
-		if orderSys, ok = api.ApiTrade.MapOrderSysSys[idOrderSys]; !ok {
-			orderSys = &tradeBasic.SOrderSys{
-				OrderRef:     orderRef,
-				IdOrderLocal: mapTransed["idOrderLocal"],
-				IdOrderSys:   idOrderSys,
-			}
-			api.ApiTrade.MapOrderSysSys[idOrderSys] = orderSys
-		}
-	} else {
-		if orderSys, ok = api.ApiTrade.MapOrderSysLocal[orderRef]; !ok {
-			orderSys = &tradeBasic.SOrderSys{
-				OrderRef:     orderRef,
-				IdOrderLocal: mapTransed["idOrderLocal"],
-				IdOrderSys:   idOrderSys,
-			}
-			api.ApiTrade.MapOrderSysLocal[orderRef] = orderSys
-		}
+	orderSys = &tradeBasic.SOrderSys{
+		OrderRef:     orderRef,
+		IdOrderLocal: mapTransed["idOrderLocal"],
+		IdOrderSys:   idOrderSys,
 	}
 	// tradeStatus
 	mapTransed["margin"] = mapTransed["val"]

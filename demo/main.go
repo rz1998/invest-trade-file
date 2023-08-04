@@ -39,8 +39,6 @@ func main() {
 	apiTraderFile := file.ApiTraderFile{}
 	apiTraderFile.Init(c, &apiFile, &apiTrans)
 	apiTraderFile.SetSpi(&spiTrader)
-	//
-	apiTransGWT.ApiTrade = &apiTraderFile
 	// 查询各项内容
 	apiTraderFile.Login(nil)
 	apiTraderFile.QryAcFund()

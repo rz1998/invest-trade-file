@@ -36,13 +36,11 @@ type ApiTraderFile struct {
 	countOrder       atomic.Int32
 	countOrderAction atomic.Int32
 	// ucOrder : reqOrder
-	MapReqOrderLocal map[string]*tradeBasic.PReqOrder
+	//MapReqOrder map[string]*tradeBasic.PReqOrder
 	// ucOrder : orderSys
-	MapOrderSysLocal map[string]*tradeBasic.SOrderSys
-	// ucOrder : reqOrder
-	MapReqOrderSys map[string]*tradeBasic.PReqOrder
+	//MapOrderSysLocal map[string]*tradeBasic.SOrderSys
 	// ucOrder : orderSys
-	MapOrderSysSys map[string]*tradeBasic.SOrderSys
+	//MapOrderSysSys map[string]*tradeBasic.SOrderSys
 	// ticker
 	tickerOrder    *time.Ticker                        // 定期读取委托
 	mapOrderLatest map[string]*tradeBasic.SOrderStatus // 唯一性的保存订单最终状态 ucOrder : SOrderStatus
@@ -56,10 +54,6 @@ func (api *ApiTraderFile) Init(param config.Config, apiFile *logic.IApiFile, api
 
 func (api *ApiTraderFile) Login(infoAc *tradeBasic.PInfoAc) {
 	// 初始化map
-	api.MapReqOrderLocal = make(map[string]*tradeBasic.PReqOrder)
-	api.MapOrderSysLocal = make(map[string]*tradeBasic.SOrderSys)
-	api.MapReqOrderSys = make(map[string]*tradeBasic.PReqOrder)
-	api.MapOrderSysSys = make(map[string]*tradeBasic.SOrderSys)
 	api.mapOrderLatest = make(map[string]*tradeBasic.SOrderStatus)
 	// 加载已保存数据
 	api.QryAcFund()
@@ -82,24 +76,9 @@ func (api *ApiTraderFile) Logout() {
 		api.tickerOrder = nil
 	}
 	// 清理缓存数据
-	if api.MapReqOrderLocal != nil {
-		for k := range api.MapReqOrderLocal {
-			delete(api.MapReqOrderLocal, k)
-		}
-	}
-	if api.MapOrderSysLocal != nil {
-		for k := range api.MapOrderSysLocal {
-			delete(api.MapOrderSysLocal, k)
-		}
-	}
-	if api.MapReqOrderSys != nil {
-		for k := range api.MapReqOrderSys {
-			delete(api.MapReqOrderSys, k)
-		}
-	}
-	if api.MapOrderSysSys != nil {
-		for k := range api.MapOrderSysSys {
-			delete(api.MapOrderSysSys, k)
+	if api.mapOrderLatest != nil {
+		for k := range api.mapOrderLatest {
+			delete(api.mapOrderLatest, k)
 		}
 	}
 }
@@ -187,6 +166,7 @@ func (api *ApiTraderFile) tickerQryOrder(d time.Duration) *time.Ticker {
 				// 逐个报单对比数量和状态的变动情况
 				for _, mapTransed := range mapListNew {
 					orderInfo := trans.TransInfoOrder(mapTransed)
+					// 如果是新订单就添加缓存
 					// 跟现有的比对
 					if orderInfo.OrderStatus != nil && orderInfo.OrderSys != nil &&
 						len(orderInfo.OrderSys.IdOrderLocal) != 0 {
