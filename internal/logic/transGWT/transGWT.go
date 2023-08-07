@@ -276,8 +276,8 @@ func (api ApiTransGWT) TransReqOrderAction(reqOrderAction *tradeBasic.PReqOrderA
 		return mapTransed
 	}
 	// 撤单指令名称 order_type
-	//mapTransed["order_type"] = "cancel_order"
-	mapTransed["order_type"] = "cancel_order_number"
+	mapTransed["order_type"] = "cancel_order"
+	//mapTransed["order_type"] = "cancel_order_number"
 	// 资金账号
 	mapTransed["price_type"] = reqOrderAction.OrderSys.IdOrderLocal
 	mapTransed["mode_price"] = reqOrderAction.OrderSys.IdOrderSys
