@@ -1,4 +1,4 @@
-package logic
+package tradeFile
 
 import (
 	"github.com/rz1998/invest-trade-basic/types/tradeBasic"

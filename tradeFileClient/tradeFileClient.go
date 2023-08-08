@@ -4,10 +4,8 @@ import (
 	"fmt"
 	trade "github.com/rz1998/invest-trade-basic"
 	"github.com/rz1998/invest-trade-basic/types/tradeBasic"
+	tradeFile "github.com/rz1998/invest-trade-file"
 	"github.com/rz1998/invest-trade-file/internal/config"
-	"github.com/rz1998/invest-trade-file/internal/logic"
-	"github.com/rz1998/invest-trade-file/internal/logic/fileQmtDbf"
-	"github.com/rz1998/invest-trade-file/internal/logic/transGWT"
 	"sync/atomic"
 	"time"
 )
@@ -15,12 +13,6 @@ import (
 type (
 	ConfTransFunc = config.ConfTransFunc
 	Config        = config.Config
-	IApiTrans     = logic.IApiTrans
-	IApiFile      = logic.IApiFile
-)
-type (
-	ApiFileQmtDbf = fileQmtDbf.ApiFileQmtDbf
-	ApiTransGWT   = transGWT.ApiTransGWT
 )
 
 // ApiTraderFile 对通用交易接口IApiTrader的实现
@@ -28,9 +20,9 @@ type ApiTraderFile struct {
 	// 配置信息
 	param config.Config
 	// 文件读写接口
-	apiFile *logic.IApiFile
+	apiFile *tradeFile.IApiFile
 	// 标准转换接口
-	apiTrans *logic.IApiTrans
+	apiTrans *tradeFile.IApiTrans
 	// 交易监听接口
 	spi              *trade.ISpiTrader
 	countOrder       atomic.Int32
@@ -46,7 +38,7 @@ type ApiTraderFile struct {
 	mapOrderLatest map[string]*tradeBasic.SOrderStatus // 唯一性的保存订单最终状态 ucOrder : SOrderStatus
 }
 
-func (api *ApiTraderFile) Init(param config.Config, apiFile *logic.IApiFile, apiTrans *logic.IApiTrans) {
+func (api *ApiTraderFile) Init(param config.Config, apiFile *tradeFile.IApiFile, apiTrans *tradeFile.IApiTrans) {
 	api.param = param
 	api.apiFile = apiFile
 	api.apiTrans = apiTrans
