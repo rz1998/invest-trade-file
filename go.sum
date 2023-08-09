@@ -25,8 +25,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/prashantv/gostub v1.1.0 h1:BTyx3RfQjRHnUWaGF9oQos79AlQ5k8WNktv7VGvVH4g=
 github.com/rz1998/invest-basic v0.0.1 h1:YORekAcIbv9S5npP3v6/FTpGdNO9xx2tnHNIrH7pgJc=
 github.com/rz1998/invest-basic v0.0.1/go.mod h1:Yot01M7NOZ0+Y/tdbxSz/2rI9JOfKBT0lZy6RBGGm+g=
-github.com/rz1998/invest-trade-basic v0.0.1 h1:0PDTlW8DQkxXvxiypJrTeSFauretlD3MaxOYjXlXNAU=
-github.com/rz1998/invest-trade-basic v0.0.1/go.mod h1:t13/Fi//b0nKWNf2a1s5ZKd8CxTsyV3vDTMdRN2SnwE=
+github.com/rz1998/invest-trade-basic v0.0.2 h1:Z/5ECRGaMuoQDra0HArPS2w4hOAiQ1oeWjGnW2o8UKc=
+github.com/rz1998/invest-trade-basic v0.0.2/go.mod h1:0X2MGY1cnOmsCMHBuo/YTXrt6z6BlMhT2P6Gh+qs56M=
 github.com/spaolacci/murmur3 v1.1.0 h1:7c1g84S4BPRrfL5Xrdp6fOJ206sU9y293DDHaoy0bLI=
 github.com/spaolacci/murmur3 v1.1.0/go.mod h1:JwIasOWyU6f++ZhiEuf87xNszmSA2myDM2Kzu9HwQUA=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

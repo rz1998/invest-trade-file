@@ -16,8 +16,8 @@ MapTrans:
       委托状态: "statusMsg"
       成交数量: "volTraded"
     NameAct: "qryOrder"
-#      PathFile: "/data/gwt/dbf/XT_WTCX_Stock_"
-    PathFile: "C:\\gwt\\dbf\\XT_WTCX_Stock_"
+    PathFile: "/data/gwt/dbf/XT_WTCX_Stock_"
+#    PathFile: "C:\\gwt\\dbf\\XT_WTCX_Stock_"
   qryAcFund:
     JsonTrans:
       可取金额: "valWithdraw"
@@ -30,8 +30,8 @@ MapTrans:
   reqOrderAction:
     JsonTrans: {}
     NameAct: "reqOrderAction"
-#      PathFile: "/data/gwt/dbf/XT_DBF_ORDER.dbf"
-    PathFile: "C:\\gwt\\dbf\\XT_DBF_ORDER.dbf"
+    PathFile: "/data/gwt/dbf/XT_DBF_ORDER.dbf"
+#    PathFile: "C:\\gwt\\dbf\\XT_DBF_ORDER.dbf"
   qryTrade:
     JsonTrans:
       证券代码: "uniqueCode"
@@ -49,8 +49,8 @@ MapTrans:
       成交金额: "val"
       手续费: "fees"
     NameAct: "qryTrade"
-#      PathFile: "/data/gwt/dbf/XT_CJCX_Stock_"
-    PathFile: "C:\\gwt\\dbf\\XT_CJCX_Stock_"
+    PathFile: "/data/gwt/dbf/XT_CJCX_Stock_"
+#    PathFile: "C:\\gwt\\dbf\\XT_CJCX_Stock_"
   qryAcPos:
     JsonTrans:
       证券代码: "uniqueCode"
@@ -61,11 +61,11 @@ MapTrans:
       可用数量: "volFrozenYd"
       市值: "margin"
     NameAct: "qryAcPos"
-#      PathFile: "/data/gwt/dbf/XT_CCTJ_Stock_"
-    PathFile: "C:\\gwt\\dbf\\XT_CCTJ_Stock_"
+    PathFile: "/data/gwt/dbf/XT_CCTJ_Stock_"
+#    PathFile: "C:\\gwt\\dbf\\XT_CCTJ_Stock_"
   reqOrder:
     JsonTrans: {}
     NameAct: "reqOrder"
-#      PathFile: "/data/gwt/dbf/XT_DBF_ORDER.dbf"
-    PathFile: "C:\\gwt\\dbf\\XT_DBF_ORDER.dbf"
+    PathFile: "/data/gwt/dbf/XT_DBF_ORDER.dbf"
+#    PathFile: "C:\\gwt\\dbf\\XT_DBF_ORDER.dbf"
 Sep: ","

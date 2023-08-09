@@ -24,6 +24,7 @@ func (api *ApiFileQmtDbf) GetPath(nameFunc string) string {
 		logx.Errorf("ReadFileFunc has no func %s", nameFunc)
 		return ""
 	}
+	// 根据日期设置文件名
 	date := time.Now()
 	return fmt.Sprintf("%s%s.dbf", trans.PathFile, date.Format("20060102"))
 }
@@ -31,22 +32,23 @@ func (api *ApiFileQmtDbf) GetPath(nameFunc string) string {
 // ReadFileFunc 读取指定方法对应的文件，并将内容以键值对的形式返回
 func (api *ApiFileQmtDbf) ReadFileFunc(nameFunc string) []map[string]string {
 	var results []map[string]string
-
+	strMethod := "ReadFileFunc"
 	// 读取配置中对应方法的配置信息
 	trans, hasTrans := api.conf.MapTrans[nameFunc]
 	if !hasTrans {
-		logx.Errorf("ReadFileFunc has no func %s", nameFunc)
+		logx.Errorf("%s has no func %s", strMethod, nameFunc)
 		return results
 	}
 	// 生成文件名
 	path := api.GetPath(nameFunc)
 	if len(path) == 0 {
-		logx.Errorf("ReadFileFunc has no path %s", nameFunc)
+		logx.Errorf("%s has no path %s", strMethod, nameFunc)
 		return results
 	}
+	// 读取文件内容
 	dbfTable, err := godbf.NewFromFile(path, api.conf.Encoding)
 	if err != nil {
-		logx.Errorf("ReadFileFunc %v", err)
+		logx.Errorf("%s %v", strMethod, err)
 		return results
 	}
 
@@ -70,15 +72,16 @@ func (api *ApiFileQmtDbf) WriteFileFunc(nameFunc string, mapRecords []map[string
 	if mapRecords == nil || len(mapRecords) == 0 {
 		return
 	}
+	strMethod := "WriteFileFunc"
 	// 读取配置中对应方法的配置信息
 	trans, hasTrans := api.conf.MapTrans[nameFunc]
 	if !hasTrans {
-		logx.Errorf("WriteFileFunc has no func %s", nameFunc)
+		logx.Errorf("%s has no func %s", strMethod, nameFunc)
 		return
 	}
 	table, err := godbf.NewFromFile(trans.PathFile, api.conf.Encoding)
 	if err != nil {
-		logx.Errorf("WriteFileFunc %v", err)
+		logx.Errorf("%s %v", strMethod, err)
 		return
 	}
 	fields := table.Fields()
@@ -89,14 +92,14 @@ func (api *ApiFileQmtDbf) WriteFileFunc(nameFunc string, mapRecords []map[string
 			if record, ok := mapRecords[j][field.Name()]; ok {
 				err = table.SetFieldValueByName(i, field.Name(), record)
 				if err != nil {
-					logx.Errorf("WriteFileFunc set field error %v", err)
+					logx.Errorf("%s set field error %v", strMethod, err)
 				}
 			}
 		}
 	}
 	err = godbf.SaveToFile(table, trans.PathFile)
 	if err != nil {
-		logx.Errorf("WriteFileFunc SaveToFile error %v", err)
+		logx.Errorf("%s SaveToFile error %v", strMethod, err)
 		return
 	}
 }

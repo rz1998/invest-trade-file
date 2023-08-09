@@ -2,16 +2,16 @@ package main
 
 import (
 	"flag"
+	"time"
+
 	trade "github.com/rz1998/invest-trade-basic"
 	"github.com/rz1998/invest-trade-basic/demoTradeSpi"
-	tradeFile "github.com/rz1998/invest-trade-file"
 	"github.com/rz1998/invest-trade-file/apiFile/fileQmtDbf"
 	"github.com/rz1998/invest-trade-file/apiTrans/transGWT"
 	"github.com/rz1998/invest-trade-file/internal/config"
 	"github.com/rz1998/invest-trade-file/tradeFileClient"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 )
 
 func main() {
@@ -23,18 +23,11 @@ func main() {
 	conf.MustLoad(*configFile, &c, conf.UseEnv())
 	logx.Infof("%+v", c)
 	// apiFileQMT
-	var apiFile tradeFile.IApiFile
-	apiFileQMT := fileQmtDbf.ApiFileQmtDbf{}
-	apiFileQMT.Init(c)
-	apiFile = &apiFileQMT
+	apiFile := tradeFileClient.NewApiFile(fileQmtDbf.ApiFileQmtDbf{})
 	// apiTransGWT
-	var apiTrans tradeFile.IApiTrans
-	apiTransGWT := transGWT.ApiTransGWT{}
-	apiTrans = &apiTransGWT
+	apiTrans := tradeFileClient.NewApiTrans(transGWT.ApiTransGWT{})
 	// 初始化spi
-	var spiTrader trade.ISpiTrader
-	spiTraderPrint := demoTradeSpi.SpiTraderPrint{}
-	spiTrader = &spiTraderPrint
+	spiTrader := trade.NewSpiTrader(demoTradeSpi.SpiTraderPrint{})
 	// 初始化api
 	apiTraderFile := tradeFileClient.ApiTraderFile{}
 	apiTraderFile.Init(c, &apiFile, &apiTrans)
@@ -44,3 +37,4 @@ func main() {
 	apiTraderFile.QryAcFund()
 	time.Sleep(1 * time.Second)
 }
+

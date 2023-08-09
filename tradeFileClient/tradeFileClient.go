@@ -2,18 +2,39 @@ package tradeFileClient
 
 import (
 	"fmt"
+	"reflect"
+	"sync/atomic"
+	"time"
+
 	trade "github.com/rz1998/invest-trade-basic"
 	"github.com/rz1998/invest-trade-basic/types/tradeBasic"
 	tradeFile "github.com/rz1998/invest-trade-file"
 	"github.com/rz1998/invest-trade-file/internal/config"
-	"sync/atomic"
-	"time"
 )
 
 type (
 	ConfTransFunc = config.ConfTransFunc
 	Config        = config.Config
 )
+
+func NewApiFile(structApiFile interface{}) tradeFile.IApiFile {
+	t := reflect.TypeOf(structApiFile)
+	if t.Kind() == reflect.Ptr {
+		//指针类型获取真正type需要调用Elem
+		t = t.Elem()
+	}
+	newApi := reflect.New(t).Interface()
+	return newApi.(tradeFile.IApiFile)
+}
+func NewApiTrans(structApiTrans interface{}) tradeFile.IApiTrans {
+	t := reflect.TypeOf(structApiTrans)
+	if t.Kind() == reflect.Ptr {
+		//指针类型获取真正type需要调用Elem
+		t = t.Elem()
+	}
+	newApi := reflect.New(t).Interface()
+	return newApi.(tradeFile.IApiTrans)
+}
 
 // ApiTraderFile 对通用交易接口IApiTrader的实现
 type ApiTraderFile struct {
@@ -39,6 +60,8 @@ type ApiTraderFile struct {
 }
 
 func (api *ApiTraderFile) Init(param config.Config, apiFile *tradeFile.IApiFile, apiTrans *tradeFile.IApiTrans) {
+	(*apiFile).Init(param)
+	(*apiTrans).Init(param)
 	api.param = param
 	api.apiFile = apiFile
 	api.apiTrans = apiTrans

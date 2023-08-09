@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/axgle/mahonia v0.0.0-20180208002826-3358181d7394
-	github.com/rz1998/invest-trade-basic v0.0.1
+	github.com/rz1998/invest-trade-basic v0.0.2
 	github.com/zeromicro/go-zero v1.5.4
 )
 
