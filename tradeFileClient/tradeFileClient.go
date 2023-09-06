@@ -48,12 +48,6 @@ type ApiTraderFile struct {
 	spi              *trade.ISpiTrader
 	countOrder       atomic.Int32
 	countOrderAction atomic.Int32
-	// ucOrder : reqOrder
-	//MapReqOrder map[string]*tradeBasic.PReqOrder
-	// ucOrder : orderSys
-	//MapOrderSysLocal map[string]*tradeBasic.SOrderSys
-	// ucOrder : orderSys
-	//MapOrderSysSys map[string]*tradeBasic.SOrderSys
 	// ticker
 	tickerOrder    *time.Ticker                        // 定期读取委托
 	mapOrderLatest map[string]*tradeBasic.SOrderStatus // 唯一性的保存订单最终状态 ucOrder : SOrderStatus
@@ -98,16 +92,16 @@ func (api *ApiTraderFile) Logout() {
 	}
 }
 
-func (api *ApiTraderFile) generateOrderRef() string {
-	return fmt.Sprintf("%d_%d", api.countOrder.Add(1), time.Now().UnixMilli())
-}
-
 // ReqOrder 报单请求
 func (api *ApiTraderFile) ReqOrder(reqOrder *tradeBasic.PReqOrder) {
 	if reqOrder != nil {
 		nameFunc := "reqOrder"
 		trans := *api.apiTrans
-		reqOrder.OrderRef = api.generateOrderRef()
+		if len(reqOrder.OrderRef) == 0 {
+			reqOrder.OrderRef = fmt.Sprintf("%d_%d", api.countOrder.Add(1), time.Now().UnixMilli())
+		} else {
+			reqOrder.OrderRef = fmt.Sprintf("%d_%s", api.countOrder.Add(1), reqOrder.OrderRef)
+		}
 		mapRecord := trans.TransReqOrder(reqOrder)
 		(*api.apiFile).WriteFileFunc(nameFunc, []map[string]string{mapRecord})
 	}
@@ -115,12 +109,16 @@ func (api *ApiTraderFile) ReqOrder(reqOrder *tradeBasic.PReqOrder) {
 
 // ReqOrderBatch 批量报单请求
 func (api *ApiTraderFile) ReqOrderBatch(reqOrders []*tradeBasic.PReqOrder) {
-	if reqOrders != nil && len(reqOrders) > 0 {
+	if len(reqOrders) > 0 {
 		nameFunc := "reqOrderBatch"
 		trans := *api.apiTrans
 		mapRecords := make([]map[string]string, len(reqOrders))
 		for i, reqOrder := range reqOrders {
-			reqOrder.OrderRef = api.generateOrderRef()
+			if len(reqOrder.OrderRef) == 0 {
+				reqOrder.OrderRef = fmt.Sprintf("%d_%d", api.countOrder.Add(1), time.Now().UnixMilli())
+			} else {
+				reqOrder.OrderRef = fmt.Sprintf("%d_%s", api.countOrder.Add(1), reqOrder.OrderRef)
+			}
 			mapRecords[i] = trans.TransReqOrder(reqOrder)
 		}
 		(*api.apiFile).WriteFileFunc(nameFunc, mapRecords)
@@ -143,7 +141,7 @@ func (api *ApiTraderFile) QryAcFund() {
 	nameFunc := "qryAcFund"
 	mapList := (*api.apiFile).ReadFileFunc(nameFunc)
 	spi := *api.spi
-	if mapList != nil && len(mapList) > 0 {
+	if len(mapList) > 0 {
 		trans := *api.apiTrans
 		spi.OnRtnAcFund(trans.TransAcFund(mapList[0]))
 	}
@@ -159,7 +157,7 @@ func (api *ApiTraderFile) QryAcPos() {
 	nameFunc := "qryAcPos"
 	mapList := (*api.apiFile).ReadFileFunc(nameFunc)
 	spi := *api.spi
-	if mapList != nil && len(mapList) > 0 {
+	if len(mapList) > 0 {
 		trans := *api.apiTrans
 		for _, mapTransed := range mapList {
 			spi.OnRtnAcPos(trans.TransAcPos(mapTransed), false)
@@ -209,7 +207,7 @@ func (api *ApiTraderFile) QryOrder(orderSys *tradeBasic.SOrderSys) {
 	nameFunc := "qryOrder"
 	mapList := (*api.apiFile).ReadFileFunc(nameFunc)
 	spi := *api.spi
-	if mapList != nil && len(mapList) > 0 {
+	if len(mapList) > 0 {
 		trans := *api.apiTrans
 		for _, mapTransed := range mapList {
 			orderInfo := trans.TransInfoOrder(mapTransed)
@@ -238,7 +236,7 @@ func (api *ApiTraderFile) QryTrade() {
 	nameFunc := "qryTrade"
 	mapList := (*api.apiFile).ReadFileFunc(nameFunc)
 	spi := *api.spi
-	if mapList != nil && len(mapList) > 0 {
+	if len(mapList) > 0 {
 		trans := *api.apiTrans
 		for _, mapTransed := range mapList {
 			spi.OnRtnTrade(trans.TransInfoTrade(mapTransed), false)
