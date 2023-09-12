@@ -1,3 +1,35 @@
+/*
+ *                                                     __----~~~~~~~~~~~------___
+ *                                    .  .   ~~//====......          __--~ ~~
+ *                    -.            \_|//     |||\\  ~~~~~~::::... /~
+ *                 ___-==_       _-~o~  \/    |||  \\            _/~~-
+ *         __---~~~.==~||\=_    -_--~/_-~|-   |\\   \\        _/~
+ *     _-~~     .=~    |  \\-_    '-~7  /-   /  ||    \      /
+ *   .~       .~       |   \\ -_    /  /-   /   ||      \   /
+ *  /  ____  /         |     \\ ~-_/  /|- _/   .||       \ /
+ *  |~~    ~~|--~~~~--_ \     ~==-/   | \~--===~~        .\
+ *           '         ~-|      /|    |-~\~~       __--~~
+ *                       |-~~-_/ |    |   ~\_   _-~            /\
+ *                            /  \     \__   \/~                \__
+ *                        _--~ _/ | .-~~____--~-/                  ~~==.
+ *                       ((->/~   '.|||' -_|    ~~-/ ,              . _||
+ *                                  -_     ~\      ~~---l__i__i__i--~~_/
+ *                                  _-~-__   ~)  \--______________--~~
+ *                                //.-~~~-~_--~- |-------~~~~~~~~
+ *                                       //.-~~~--\
+ *                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ *                               神兽保佑            永无BUG
+ *
+ * @Author: rz1998 rz1998@126.com
+ * @Date: 2023-07-31 11:00:26
+ * @LastEditors: rz1998 rz1998@126.com
+ * @LastEditTime: 2023-09-10 19:31:00
+ * @FilePath: /marketMaker/mnt/raid0/onedrive/zy/coding/workspace/github.com/rz1998/invest/trade/file/tradeFileClient/tradeFileClient.go
+ * @Description:
+ *
+ */
+
 package tradeFileClient
 
 import (
@@ -211,6 +243,10 @@ func (api *ApiTraderFile) QryOrder(orderSys *tradeBasic.SOrderSys) {
 		trans := *api.apiTrans
 		for _, mapTransed := range mapList {
 			orderInfo := trans.TransInfoOrder(mapTransed)
+			// 排除空数据
+			if orderInfo.ReqOrder == nil || len(orderInfo.ReqOrder.UniqueCode) == 0 {
+				continue
+			}
 			// 设置为查询
 			if orderInfo.OrderSys != nil {
 				orderInfo.OrderSys.SourceInfo = tradeBasic.QUERY

@@ -2,11 +2,12 @@ package fileQmtDbf
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/rz1998/invest-trade-file/apiFile/fileQmtDbf/godbf"
 	"github.com/rz1998/invest-trade-file/internal/config"
 	"github.com/rz1998/invest-trade-file/internal/logic"
 	"github.com/zeromicro/go-zero/core/logx"
-	"time"
 )
 
 type ApiFileQmtDbf struct {
@@ -55,14 +56,19 @@ func (api *ApiFileQmtDbf) ReadFileFunc(nameFunc string) []map[string]string {
 	nameFields := dbfTable.FieldNames()
 
 	size := dbfTable.NumberOfRecords()
-	results = make([]map[string]string, size)
 
 	for i := 0; i < size; i++ {
-		results[i] = make(map[string]string)
+		result := make(map[string]string)
+		allEmpty := true
 		for _, nameField := range nameFields {
-			results[i][nameField], _ = dbfTable.FieldValueByName(i, nameField)
+			result[nameField], _ = dbfTable.FieldValueByName(i, nameField)
+			if len(result[nameField]) > 0 {
+				allEmpty = false
+			}
 		}
-		results[i] = logic.TransKey(trans.JsonTrans, results[i])
+		if !allEmpty {
+			results = append(results, logic.TransKey(trans.JsonTrans, result))
+		}
 	}
 	return results
 }

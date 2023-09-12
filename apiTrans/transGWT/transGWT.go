@@ -2,15 +2,16 @@ package transGWT
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
+	"time"
+
 	invest "github.com/rz1998/invest-basic"
 	"github.com/rz1998/invest-basic/types/investBasic"
 	"github.com/rz1998/invest-trade-basic/types/tradeBasic"
 	"github.com/rz1998/invest-trade-file/internal/config"
 	"github.com/rz1998/invest-trade-file/internal/logic"
 	"github.com/zeromicro/go-zero/core/logx"
-	"strconv"
-	"strings"
-	"time"
 )
 
 func getUniqueCode(mapTransed map[string]string) string {

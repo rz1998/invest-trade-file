@@ -2,11 +2,11 @@ package godbf
 
 import (
 	"errors"
-	"fmt"
-	"github.com/axgle/mahonia"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/axgle/mahonia"
 )
 
 const (
@@ -490,8 +490,8 @@ func (dt *DbfTable) FieldValue(row int, fieldIndex int) (value string) {
 
 	tar := (offset + recordOffset) + int(dt.fields[fieldIndex].length)
 	if tar > len(dt.dataStore) {
-		fmt.Printf("FieldValue stopped by read write conflict row %d fieldIndex %d tar %d total %d\n",
-			row, fieldIndex, tar, len(dt.dataStore))
+		// fmt.Printf("FieldValue stopped by read write conflict row %d fieldIndex %d tar %d total %d\n",
+		// 	row, fieldIndex, tar, len(dt.dataStore))
 		return
 	}
 	temp := dt.dataStore[(offset + recordOffset):tar]
