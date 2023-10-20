@@ -2,6 +2,7 @@ package fileQmtDbf
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/rz1998/invest-trade-file/apiFile/fileQmtDbf/godbf"
@@ -12,10 +13,27 @@ import (
 
 type ApiFileQmtDbf struct {
 	conf config.Config
+	// 缓存配置map，保证线程安全 funcName string : ConfTransFunc
+	mapTransSafe sync.Map
+	// 缓存不同文件的写入chan   pathFile string : chan mapRecords []map[string]string
+	mapChanWrite sync.Map
 }
 
 func (api *ApiFileQmtDbf) Init(conf config.Config) {
 	api.conf = conf
+	api.mapTransSafe = sync.Map{}
+	for k, v := range api.conf.MapTrans {
+		api.mapTransSafe.Store(k, v)
+	}
+	api.mapChanWrite = sync.Map{}
+}
+func (api *ApiFileQmtDbf) Stop() {
+	api.mapChanWrite.Range(func(pathFile, cnVal any) bool {
+		cn := cnVal.(chan []map[string]string)
+		close(cn)
+		api.mapChanWrite.Delete(pathFile)
+		return true
+	})
 }
 
 func (api *ApiFileQmtDbf) GetPath(nameFunc string) string {
@@ -75,37 +93,54 @@ func (api *ApiFileQmtDbf) ReadFileFunc(nameFunc string) []map[string]string {
 
 // WriteFileFunc 将指定的内容，写入指定的方法对应的文件
 func (api *ApiFileQmtDbf) WriteFileFunc(nameFunc string, mapRecords []map[string]string) {
-	if mapRecords == nil || len(mapRecords) == 0 {
+	if len(mapRecords) == 0 {
 		return
 	}
 	strMethod := "WriteFileFunc"
 	// 读取配置中对应方法的配置信息
-	trans, hasTrans := api.conf.MapTrans[nameFunc]
+	transVal, hasTrans := api.mapTransSafe.Load(nameFunc)
 	if !hasTrans {
 		logx.Errorf("%s has no func %s", strMethod, nameFunc)
 		return
 	}
-	table, err := godbf.NewFromFile(trans.PathFile, api.conf.Encoding)
-	if err != nil {
-		logx.Errorf("%s %v", strMethod, err)
-		return
-	}
-	fields := table.Fields()
-	size := len(mapRecords)
-	for j := 0; j < size; j++ {
-		i, _ := table.AddNewRecord()
-		for _, field := range fields {
-			if record, ok := mapRecords[j][field.Name()]; ok {
-				err = table.SetFieldValueByName(i, field.Name(), record)
+	trans := transVal.(*config.ConfTransFunc)
+	var cn chan []map[string]string
+	cnVal, hasCN := api.mapChanWrite.Load(trans.PathFile)
+	if !hasCN {
+		// 创建 chan
+		cn = make(chan []map[string]string, 10)
+		// 放入缓存
+		api.mapChanWrite.Store(trans.PathFile, cn)
+		// 创建任务
+		go func(confTrans *config.ConfTransFunc, chanWrite chan []map[string]string) {
+			for mapRec := range chanWrite {
+				table, err := godbf.NewFromFile(trans.PathFile, api.conf.Encoding)
 				if err != nil {
-					logx.Errorf("%s set field error %v", strMethod, err)
+					logx.Errorf("%s %v", strMethod, err)
+					continue
+				}
+				fields := table.Fields()
+				size := len(mapRec)
+				for j := 0; j < size; j++ {
+					i, _ := table.AddNewRecord()
+					for _, field := range fields {
+						if record, ok := mapRec[j][field.Name()]; ok {
+							err = table.SetFieldValueByName(i, field.Name(), record)
+							if err != nil {
+								logx.Errorf("%s set field error %v", strMethod, err)
+							}
+						}
+					}
+				}
+				err = godbf.SaveToFile(table, trans.PathFile)
+				if err != nil {
+					logx.Errorf("%s SaveToFile error %v", strMethod, err)
+					continue
 				}
 			}
-		}
+		}(trans, cn)
+	} else {
+		cn = cnVal.(chan []map[string]string)
 	}
-	err = godbf.SaveToFile(table, trans.PathFile)
-	if err != nil {
-		logx.Errorf("%s SaveToFile error %v", strMethod, err)
-		return
-	}
+	cn <- mapRecords
 }

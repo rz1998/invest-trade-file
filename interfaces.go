@@ -27,6 +27,8 @@ type IApiTrans interface {
 type IApiFile interface {
 	// Init 初始化，设定参数
 	Init(param config.Config)
+	// 结束并清理
+	Stop()
 	// GetPath 生成方法对应文件的文件路径
 	GetPath(nameFunc string) string
 	// ReadFileFunc 读取指定方法对应的文件，并将内容以键值对的形式返回

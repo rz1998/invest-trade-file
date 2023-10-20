@@ -24,8 +24,8 @@
  * @Author: rz1998 rz1998@126.com
  * @Date: 2023-07-31 11:00:26
  * @LastEditors: rz1998 rz1998@126.com
- * @LastEditTime: 2023-09-10 19:31:00
- * @FilePath: /marketMaker/mnt/raid0/onedrive/zy/coding/workspace/github.com/rz1998/invest/trade/file/tradeFileClient/tradeFileClient.go
+ * @LastEditTime: 2023-09-22 16:24:47
+ * @FilePath: /file/tradeFileClient/tradeFileClient.go
  * @Description:
  *
  */
@@ -122,6 +122,8 @@ func (api *ApiTraderFile) Logout() {
 			delete(api.mapOrderLatest, k)
 		}
 	}
+	// 结束文件接口
+	(*api.apiFile).Stop()
 }
 
 // ReqOrder 报单请求
